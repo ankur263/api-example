@@ -1,0 +1,3 @@
+include ':example-app'
+include ':extern:openpgp-api-lib'
+include ':extern:openkeychain-api-lib'
