@@ -128,7 +128,7 @@ public class OpenPgpProviderActivity extends Activity {
         } else {
             // bind to service
             mServiceConnection = new OpenPgpServiceConnection(
-                    OpenPgpProviderActivity.this, providerPackageName);
+                    OpenPgpProviderActivity.this.getApplicationContext(), providerPackageName);
             mServiceConnection.bindToService();
         }
     }
@@ -239,7 +239,8 @@ public class OpenPgpProviderActivity extends Activity {
 
                     PendingIntent pi = result.getParcelableExtra(OpenPgpApi.RESULT_INTENT);
                     try {
-                        OpenPgpProviderActivity.this.startIntentSenderForResult(pi.getIntentSender(),
+                        OpenPgpProviderActivity.this.startIntentSenderFromChild(
+                                OpenPgpProviderActivity.this, pi.getIntentSender(),
                                 requestCode, null, 0, 0, 0);
                     } catch (IntentSender.SendIntentException e) {
                         Log.e(Constants.TAG, "SendIntentException", e);
