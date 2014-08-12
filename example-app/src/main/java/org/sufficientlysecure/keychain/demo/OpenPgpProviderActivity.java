@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.openintents.openpgp.IOpenPgpService;
 import org.openintents.openpgp.OpenPgpError;
 import org.openintents.openpgp.OpenPgpSignatureResult;
 import org.openintents.openpgp.util.OpenPgpApi;
@@ -128,7 +129,20 @@ public class OpenPgpProviderActivity extends Activity {
         } else {
             // bind to service
             mServiceConnection = new OpenPgpServiceConnection(
-                    OpenPgpProviderActivity.this.getApplicationContext(), providerPackageName);
+                    OpenPgpProviderActivity.this.getApplicationContext(),
+                    providerPackageName,
+                    new OpenPgpServiceConnection.OnBound() {
+                        @Override
+                        public void onBound(IOpenPgpService service) {
+                            Log.d(OpenPgpApi.TAG, "onBound!");
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.e(OpenPgpApi.TAG, "exception when binding!", e);
+                        }
+                    }
+            );
             mServiceConnection.bindToService();
         }
     }
