@@ -286,7 +286,9 @@ public class OpenPgpProviderActivity extends Activity {
 
     public void encrypt(Intent data) {
         data.setAction(OpenPgpApi.ACTION_ENCRYPT);
-        data.putExtra(OpenPgpApi.EXTRA_USER_IDS, mEncryptUserIds.getText().toString().split(","));
+        if (!TextUtils.isEmpty(mEncryptUserIds.getText().toString())) {
+            data.putExtra(OpenPgpApi.EXTRA_USER_IDS, mEncryptUserIds.getText().toString().split(","));
+        }
         data.putExtra(OpenPgpApi.EXTRA_REQUEST_ASCII_ARMOR, true);
         data.putExtra(OpenPgpApi.EXTRA_ACCOUNT_NAME, mAccount.getText().toString());
 
@@ -299,7 +301,9 @@ public class OpenPgpProviderActivity extends Activity {
 
     public void signAndEncrypt(Intent data) {
         data.setAction(OpenPgpApi.ACTION_SIGN_AND_ENCRYPT);
-        data.putExtra(OpenPgpApi.EXTRA_USER_IDS, mEncryptUserIds.getText().toString().split(","));
+        if (!TextUtils.isEmpty(mEncryptUserIds.getText().toString())) {
+            data.putExtra(OpenPgpApi.EXTRA_USER_IDS, mEncryptUserIds.getText().toString().split(","));
+        }
         data.putExtra(OpenPgpApi.EXTRA_REQUEST_ASCII_ARMOR, true);
         data.putExtra(OpenPgpApi.EXTRA_ACCOUNT_NAME, mAccount.getText().toString());
 
