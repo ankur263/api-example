@@ -18,13 +18,11 @@ package org.sufficientlysecure.keychain.demo;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -54,20 +52,20 @@ public class IntentActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.intent_preference);
 
         // find preferences
-        mEncrypt = (Preference) findPreference("ENCRYPT");
-        mEncryptUri = (Preference) findPreference("ENCRYPT_URI");
-        mDecrypt = (Preference) findPreference("DECRYPT");
-        mImportKey = (Preference) findPreference("IMPORT_KEY");
-        mImportKeyFromKeyserver = (Preference) findPreference("IMPORT_KEY_FROM_KEYSERVER");
-        mImportKeyFromQrCode = (Preference) findPreference("IMPORT_KEY_FROM_QR_CODE");
-        mOpenpgp4fpr = (Preference) findPreference("openpgp4fpr");
+        mEncrypt = findPreference("ENCRYPT");
+        mEncryptUri = findPreference("ENCRYPT_URI");
+        mDecrypt = findPreference("DECRYPT");
+        mImportKey = findPreference("IMPORT_KEY");
+        mImportKeyFromKeyserver = findPreference("IMPORT_KEY_FROM_KEYSERVER");
+        mImportKeyFromQrCode = findPreference("IMPORT_KEY_FROM_QR_CODE");
+        mOpenpgp4fpr = findPreference("openpgp4fpr");
 
 
         mEncrypt.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try {
-                    Intent intent = new Intent(OpenKeychainIntents.ENCRYPT);
+                    Intent intent = new Intent(OpenKeychainIntents.ENCRYPT_TEXT);
                     intent.putExtra(OpenKeychainIntents.ENCRYPT_EXTRA_TEXT, "Hello world!");
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
@@ -112,7 +110,7 @@ public class IntentActivity extends PreferenceActivity {
                     byte[] pubkey = null;
                     try {
                         pubkey = TEST_PUBKEY.getBytes("UTF-8");
-                        intent.putExtra(OpenKeychainIntents.IMPORT_KEY_EXTRA_KEY_BYTES, pubkey);
+                        intent.putExtra(OpenKeychainIntents.IMPORT_EXTRA_KEY_EXTRA_KEY_BYTES, pubkey);
                         startActivity(intent);
                     } catch (UnsupportedEncodingException e) {
                         Log.e(Constants.TAG, "UnsupportedEncodingException", e);
@@ -130,7 +128,7 @@ public class IntentActivity extends PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 try {
                     Intent intent = new Intent(OpenKeychainIntents.IMPORT_KEY_FROM_KEYSERVER);
-                    intent.putExtra(OpenKeychainIntents.IMPORT_KEY_FROM_KEYSERVER_QUERY, "Richard Stallman");
+                    intent.putExtra(OpenKeychainIntents.IMPORT_KEY_FROM_KEYSERVER_EXTRA_QUERY, "Richard Stallman");
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(IntentActivity.this, "Activity not found!", Toast.LENGTH_LONG).show();
@@ -180,24 +178,9 @@ public class IntentActivity extends PreferenceActivity {
                 if (resultCode == RESULT_OK) {
                     Uri selectedImage = imageReturnedIntent.getData();
 
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                    Cursor cursor = getContentResolver().query(
-                            selectedImage, filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String filePath = cursor.getString(columnIndex);
-                    cursor.close();
-
-                    // TODO: after fixing DECRYPT, we could use Uri selectedImage directly
-                    Log.d(Constants.TAG, "filePath: " + filePath);
-
                     try {
-                        Intent intent = new Intent(OpenKeychainIntents.ENCRYPT);
-                        Uri dataUri = Uri.parse("file://" + filePath);
-                        Log.d(Constants.TAG, "Uri: " + dataUri);
-                        intent.setData(dataUri);
+                        Intent intent = new Intent(OpenKeychainIntents.ENCRYPT_DATA);
+                        intent.setData(selectedImage);
                         startActivity(intent);
                     } catch (ActivityNotFoundException e) {
                         Toast.makeText(IntentActivity.this, "Activity not found!", Toast.LENGTH_LONG).show();
