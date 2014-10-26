@@ -91,7 +91,7 @@ public class IntentActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try {
-                    Intent intent = new Intent(OpenKeychainIntents.DECRYPT);
+                    Intent intent = new Intent(OpenKeychainIntents.DECRYPT_TEXT);
                     intent.putExtra(OpenKeychainIntents.DECRYPT_EXTRA_TEXT, TEST_SIGNED_MESSAGE);
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
