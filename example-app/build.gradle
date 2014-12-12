@@ -5,25 +5,25 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.0'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:21.0.2'
     compile project(':extern:openpgp-api-lib')
     compile project(':extern:openkeychain-api-lib')
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 19
+        targetSdkVersion 21
     }
 
     /*
