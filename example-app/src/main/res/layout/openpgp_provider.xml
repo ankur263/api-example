@@ -80,7 +80,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sign"
+                android:text="Cleartext Sign"
+                android:layout_gravity="center_vertical" />
+
+            <Button
+                android:id="@+id/crypto_provider_demo_detached_sign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Detached Sign"
                 android:layout_gravity="center_vertical" />
 
             <Button

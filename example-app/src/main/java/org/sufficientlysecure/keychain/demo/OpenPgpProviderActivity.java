@@ -41,13 +41,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 public class OpenPgpProviderActivity extends Activity {
     private EditText mMessage;
     private EditText mCiphertext;
     private EditText mEncryptUserIds;
-    private Button mSign;
+    private Button mCleartextSign;
+    private Button mDetachedSign;
     private Button mEncrypt;
     private Button mSignAndEncrypt;
     private Button mDecryptAndVerify;
@@ -59,12 +59,13 @@ public class OpenPgpProviderActivity extends Activity {
 
     private OpenPgpServiceConnection mServiceConnection;
 
-    public static final int REQUEST_CODE_SIGN = 9910;
+    public static final int REQUEST_CODE_CLEARTEXT_SIGN = 9910;
     public static final int REQUEST_CODE_ENCRYPT = 9911;
     public static final int REQUEST_CODE_SIGN_AND_ENCRYPT = 9912;
     public static final int REQUEST_CODE_DECRYPT_AND_VERIFY = 9913;
     public static final int REQUEST_CODE_GET_KEY = 9914;
     public static final int REQUEST_CODE_GET_KEY_IDS = 9915;
+    public static final int REQUEST_CODE_DETACHED_SIGN = 9916;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,8 @@ public class OpenPgpProviderActivity extends Activity {
         mMessage = (EditText) findViewById(R.id.crypto_provider_demo_message);
         mCiphertext = (EditText) findViewById(R.id.crypto_provider_demo_ciphertext);
         mEncryptUserIds = (EditText) findViewById(R.id.crypto_provider_demo_encrypt_user_id);
-        mSign = (Button) findViewById(R.id.crypto_provider_demo_sign);
+        mCleartextSign = (Button) findViewById(R.id.crypto_provider_demo_sign);
+        mDetachedSign = (Button) findViewById(R.id.crypto_provider_demo_detached_sign);
         mEncrypt = (Button) findViewById(R.id.crypto_provider_demo_encrypt);
         mSignAndEncrypt = (Button) findViewById(R.id.crypto_provider_demo_sign_and_encrypt);
         mDecryptAndVerify = (Button) findViewById(R.id.crypto_provider_demo_decrypt_and_verify);
@@ -84,10 +86,16 @@ public class OpenPgpProviderActivity extends Activity {
         mGetKey = (Button) findViewById(R.id.crypto_provider_demo_get_key);
         mGetKeyIds = (Button) findViewById(R.id.crypto_provider_demo_get_key_ids);
 
-        mSign.setOnClickListener(new View.OnClickListener() {
+        mCleartextSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sign(new Intent());
+                cleartextSign(new Intent());
+            }
+        });
+        mDetachedSign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                detachedSign(new Intent());
             }
         });
         mEncrypt.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +237,15 @@ public class OpenPgpProviderActivity extends Activity {
                         }
                     }
 
+                    // detached sign
+                    if (result.hasExtra(OpenPgpApi.RESULT_DETACHED_SIGNATURE)) {
+                        byte[] detachedSig
+                                = result.getByteArrayExtra(OpenPgpApi.RESULT_DETACHED_SIGNATURE);
+                        Log.d(OpenPgpApi.TAG, "RESULT_DETACHED_SIGNATURE: " + detachedSig.length
+                                + " str=" + new String(detachedSig));
+                        showToast(new String(detachedSig));
+                    }
+
                     // verify
                     if (result.hasExtra(OpenPgpApi.RESULT_SIGNATURE)) {
                         OpenPgpSignatureResult sigResult
@@ -272,16 +289,26 @@ public class OpenPgpProviderActivity extends Activity {
         }
     }
 
-    public void sign(Intent data) {
-        data.setAction(OpenPgpApi.ACTION_SIGN);
-        data.putExtra(OpenPgpApi.EXTRA_REQUEST_ASCII_ARMOR, true);
+    public void cleartextSign(Intent data) {
+        data.setAction(OpenPgpApi.ACTION_CLEARTEXT_SIGN);
         data.putExtra(OpenPgpApi.EXTRA_ACCOUNT_NAME, mAccount.getText().toString());
 
         InputStream is = getInputstream(false);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         OpenPgpApi api = new OpenPgpApi(this, mServiceConnection.getService());
-        api.executeApiAsync(data, is, os, new MyCallback(true, os, REQUEST_CODE_SIGN));
+        api.executeApiAsync(data, is, os, new MyCallback(true, os, REQUEST_CODE_CLEARTEXT_SIGN));
+    }
+
+    public void detachedSign(Intent data) {
+        data.setAction(OpenPgpApi.ACTION_DETACHED_SIGN);
+        data.putExtra(OpenPgpApi.EXTRA_ACCOUNT_NAME, mAccount.getText().toString());
+
+        InputStream is = getInputstream(false);
+        // no output stream needed, detached signature is returned as RESULT_DETACHED_SIGNATURE
+
+        OpenPgpApi api = new OpenPgpApi(this, mServiceConnection.getService());
+        api.executeApiAsync(data, is, null, new MyCallback(true, null, REQUEST_CODE_DETACHED_SIGN));
     }
 
     public void encrypt(Intent data) {
@@ -358,8 +385,12 @@ public class OpenPgpProviderActivity extends Activity {
              * interaction, for example selected key ids.
              */
             switch (requestCode) {
-                case REQUEST_CODE_SIGN: {
-                    sign(data);
+                case REQUEST_CODE_CLEARTEXT_SIGN: {
+                    cleartextSign(data);
+                    break;
+                }
+                case REQUEST_CODE_DETACHED_SIGN: {
+                    detachedSign(data);
                     break;
                 }
                 case REQUEST_CODE_ENCRYPT: {
