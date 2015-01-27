@@ -354,7 +354,6 @@ public class OpenPgpProviderActivity extends Activity {
 
     public void decryptAndVerify(Intent data) {
         data.setAction(OpenPgpApi.ACTION_DECRYPT_VERIFY);
-        data.putExtra(OpenPgpApi.EXTRA_REQUEST_ASCII_ARMOR, true);
         data.putExtra(OpenPgpApi.EXTRA_ACCOUNT_NAME, mAccount.getText().toString());
 
         InputStream is = getInputstream(true);
@@ -366,7 +365,6 @@ public class OpenPgpProviderActivity extends Activity {
 
     public void decryptAndVerifyDetached(Intent data) {
         data.setAction(OpenPgpApi.ACTION_DECRYPT_VERIFY);
-        data.putExtra(OpenPgpApi.EXTRA_REQUEST_ASCII_ARMOR, true);
         data.putExtra(OpenPgpApi.EXTRA_ACCOUNT_NAME, mAccount.getText().toString());
         data.putExtra(OpenPgpApi.EXTRA_DETACHED_SIGNATURE, mDetachedSignature.getText().toString().getBytes());
 
