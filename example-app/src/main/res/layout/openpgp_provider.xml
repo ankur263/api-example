@@ -71,12 +71,33 @@
                 android:textAppearance="@android:style/TextAppearance.Small" />
         </ScrollView>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Detached signature"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ScrollView
+            android:id="@+id/child_scroll3"
+            android:fillViewport="true"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <EditText
+                android:id="@+id/crypto_provider_demo_detached_signature"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="detached signature"
+                android:hint="detached signature"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+        </ScrollView>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/crypto_provider_demo_sign"
+                android:id="@+id/crypto_provider_demo_cleartext_sign"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -108,11 +129,26 @@
                 android:layout_gravity="center_vertical" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/crypto_provider_demo_decrypt_and_verify"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Decrypt and Verify" />
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/crypto_provider_demo_decrypt_and_verify"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Decrypt and Verify" />
+
+            <Button
+                android:id="@+id/crypto_provider_demo_verify_detached_signature"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Verify detached signature" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
